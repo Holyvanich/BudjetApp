@@ -1,19 +1,61 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <FormApp @submitForm="onFormsSubmit" />
+    <TotalBalance :total="TotalBalance" />
+    <BudjetList :list="list" @deleteitem="onDeleteItem" />
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import BudjetList from '@/components/BudgetList.vue';
+import TotalBalance from '@/components/TotalBalance.vue';
+import FormApp from '@/components/Form.vue';
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
-  }
-}
+    BudjetList,
+    TotalBalance,
+    FormApp,
+  },
+  data: () => ({
+    list: {
+      1: {
+        type: 'INCOME',
+        value: 100,
+        comment: 'Some comment',
+        id: 1,
+      },
+      2: {
+        type: 'OUTCOME',
+        value: -50,
+        comment: 'Some outcome comment',
+        id: 2,
+      },
+    },
+  }),
+  computed: {
+    TotalBalance() {
+      return Object.values(this.list).reduce(
+        (acc, item) => acc + item.value,
+        0
+      );
+    },
+  },
+  methods: {
+    onDeleteItem(id) {
+      this.$delete(this.list, id);
+    },
+    onFormsSubmit(data) {
+      const newObj = {
+        ...data,
+        id: String(Math.random()),
+      };
+
+      this.$set(this.list, newObj.id, newObj);
+    },
+  },
+};
 </script>
 
 <style>
